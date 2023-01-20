@@ -24,4 +24,5 @@ This is what you need to do to get started:
 - Clone this repository
 - Copy the `.env.sample` file to `.env`: `cp .env.sample` `.env`
 - Paste your service credentials into the `.env` file
-- Run the server from the `server` directory with `npm start`
+- Move to the `server` directory and install the dependencies by running `yarn install` or `npm install`.
+- Run the server from the `server` directory with `yarn start`/`npm start`.
