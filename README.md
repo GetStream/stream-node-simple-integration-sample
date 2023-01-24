@@ -6,7 +6,7 @@
 <p align="center">
 	Sample Node JavaScript server integration sample for Stream Chat, and Stream Feeds.
 	<br />
-	<a href="https://github.com/GetStream/stream-chat-js/issues">Read the related blog</a>
+	<a href="https://getstream.io/blog/minimal-node-integration-to-get-you-started-with-stream/">Read the related blog</a>
 </p>
 
 ## 📝 About Stream
