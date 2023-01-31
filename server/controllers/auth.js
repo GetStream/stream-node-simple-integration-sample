@@ -1,4 +1,6 @@
 const crypto = require("crypto");
+const bcrypt = require("bcrypt");
+
 const {
     loginHandler,
     registerUser,
@@ -9,7 +11,7 @@ const {
 const signup = async (req, res) => {
     try {
         const { username, password } = req.body;
-        const userId = crypto.randomBytes(16).toString("hex");
+        const userId =username;
 
         registerUser(userId, username, password, function (err, result) {
             signupHandler(err, result, res);
@@ -33,6 +35,4 @@ const login = async (req, res) => {
     }
 };
 
-// "$2b$10$Z2LS.rJyA7u9kKAdtr3zQ.QCOaiYKiLpgisCDrzOBjjh6lInQGZQS"
-// "$2b$10$Z2LS.rJyA7u9kKAdtr3zQ.QCOaiYKiLpgisCDrzOBjjh6lInQGZQS"
 module.exports = { signup, login };
