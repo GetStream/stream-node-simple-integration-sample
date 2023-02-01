@@ -46,6 +46,18 @@ const registerUser = (userId, username, password, cb) => {
     });
 };
 
+const queryUsers = (searchTerm, cb) => {
+    const sql = "SELECT id, username FROM users WHERE username LIKE ?";
+    const params = ["%" + searchTerm + "%"];
+    db.all(sql, params, function (err, innerResult) {
+        if (err) {
+            cb(err, innerResult);
+        } else {
+            cb(null, innerResult);
+        }
+    });
+};
+
 const signupHandler = async (err, result, res) => {
     if (err) {
         res.status(500).json({ message: err });
@@ -97,4 +109,14 @@ const loginHandler = async (error, result, res) => {
     });
 };
 
-module.exports = { verifyUser, loginHandler, registerUser, signupHandler };
+const queryUsersHandler = async (err, result, res) => {
+    if (err) {
+        res.status(500).json({ message: err });
+        return;
+    }
+    res.status(200).json({ results: result });
+};
+    
+
+
+module.exports = { verifyUser, loginHandler, registerUser, signupHandler, queryUsersHandler, queryUsers };

@@ -6,6 +6,8 @@ const {
     registerUser,
     signupHandler,
     verifyUser,
+    queryUsers,
+    queryUsersHandler,
 } = require("../utils");
 
 const signup = async (req, res) => {
@@ -35,4 +37,17 @@ const login = async (req, res) => {
     }
 };
 
-module.exports = { signup, login };
+const users = async (req, res) => {
+    try {
+        const { searchTerm } = req.body;
+
+        queryUsers(searchTerm, (err, result) => {
+            queryUsersHandler(err, result, res);
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { signup, login, users };
