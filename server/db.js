@@ -10,10 +10,10 @@ const db = new sqlite3.Database("./var/db/twitter-clone.db");
 const createTable = () => {
     db.run(
         "CREATE TABLE IF NOT EXISTS users ( \
-id TEXT PRIMARY KEY, \
-username TEXT UNIQUE, \
-hashed_password BLOB, \
-salt BLOB \
+id TEXT PRIMARY KEY NOT NULL, \
+username TEXT UNIQUE NOT NULL, \
+hashed_password BLOB NOT NULL, \
+salt BLOB NOT NULL \
 )"
     );
 };
