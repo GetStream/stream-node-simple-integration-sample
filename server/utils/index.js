@@ -46,9 +46,9 @@ const registerUser = (userId, username, password, cb) => {
     });
 };
 
-const queryUsers = (searchTerm, cb) => {
-    const sql = "SELECT id, username FROM users WHERE username LIKE ?";
-    const params = ["%" + searchTerm + "%"];
+const searchUsers = (searchTerm, selfUserId, cb) => {
+    const sql = "SELECT id, username FROM users WHERE username LIKE ? AND id != ?";
+    const params = ["%" + searchTerm + "%", selfUserId];
     db.all(sql, params, function (err, innerResult) {
         if (err) {
             cb(err, innerResult);
@@ -109,7 +109,7 @@ const loginHandler = async (error, result, res) => {
     });
 };
 
-const queryUsersHandler = async (err, result, res) => {
+const searchUsersHandler = async (err, result, res) => {
     if (err) {
         res.status(500).json({ message: err });
         return;
@@ -119,4 +119,4 @@ const queryUsersHandler = async (err, result, res) => {
     
 
 
-module.exports = { verifyUser, loginHandler, registerUser, signupHandler, queryUsersHandler, queryUsers };
+module.exports = { verifyUser, loginHandler, registerUser, signupHandler, searchUsersHandler, searchUsers };

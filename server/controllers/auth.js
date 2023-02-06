@@ -6,8 +6,8 @@ const {
     registerUser,
     signupHandler,
     verifyUser,
-    queryUsers,
-    queryUsersHandler,
+    searchUsers,
+    searchUsersHandler,
 } = require("../utils");
 
 const signup = async (req, res) => {
@@ -39,10 +39,10 @@ const login = async (req, res) => {
 
 const users = async (req, res) => {
     try {
-        const { searchTerm } = req.body;
+        const { searchTerm, selfUserId } = req.body;
 
-        queryUsers(searchTerm, (err, result) => {
-            queryUsersHandler(err, result, res);
+        searchUsers(searchTerm, selfUserId, (err, result) => {
+            searchUsersHandler(err, result, res);
         });
     } catch (error) {
         console.log(error);
