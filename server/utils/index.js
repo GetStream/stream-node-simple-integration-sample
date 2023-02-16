@@ -2,24 +2,27 @@ const { connect } = require("getstream");
 const StreamChat = require("stream-chat").StreamChat;
 const bcrypt = require("bcrypt");
 
-const db = require("../db");
+const { getClient } = require('../db');
+
 require("dotenv").config();
 
 const api_key = process.env.STREAM_API_KEY;
 const api_secret = process.env.STREAM_API_SECRET;
 const app_id = process.env.STREAM_APP_ID;
 
-const verifyUser = (username, password, cb) => {
-    db.get(
-        "SELECT * FROM users WHERE username = ?",
+const verifyUser = async (username, password, cb) => {
+    const client = await getClient();
+    await client.query(
+        "SELECT * FROM users WHERE username = $1",
         [username],
-        function (err, row) {
+        function (err, result) {
             if (err) {
                 return cb(err);
             }
-            if (!row) {
+            if (!result.rows[0]) {
                 return cb("User with this username doesn't exist.");
             }
+            const row = result.rows[0];
             const hashed_password = bcrypt.hashSync(password, row.salt);
             if (hashed_password === row.hashed_password) {
                 cb(null, row);
@@ -28,32 +31,37 @@ const verifyUser = (username, password, cb) => {
             }
         }
     );
+    // await client.end();
 };
 
-const registerUser = (userId, username, password, cb) => {
+const registerUser = async (userId, username, password, cb) => {
     const salt = bcrypt.genSaltSync(10);
     const hashed_password = bcrypt.hashSync(password, salt);
 
+    const client = await getClient();
+   
     const sql =
-        "INSERT INTO users (id, username, hashed_password, salt) VALUES (?,?,?,?)";
+        'INSERT INTO users (id, username, hashed_password, salt) VALUES ($1, $2, $3, $4) RETURNING *';
     const params = [userId, username, hashed_password, salt];
-    db.run(sql, params, function (err, innerResult) {
+    await client.query(sql, params, (err, innerResult) => {
         if (err) {
             cb(err, innerResult);
         } else {
             cb(null, { userId, username, hashed_password, salt });
         }
     });
+    // await client.end();
 };
 
-const searchUsers = (searchTerm, selfUserId, cb) => {
-    const sql = "SELECT id, username FROM users WHERE username LIKE ? AND id != ?";
+const searchUsers = async (searchTerm, selfUserId, cb) => {
+    const sql = "SELECT id, username FROM users WHERE username LIKE $1 AND id != $2";
     const params = ["%" + searchTerm + "%", selfUserId];
-    db.all(sql, params, function (err, innerResult) {
+    const client = await getClient();
+    await client.query(sql, params, (err, innerResult) => {
         if (err) {
             cb(err, innerResult);
         } else {
-            cb(null, innerResult);
+            cb(null, innerResult.rows );
         }
     });
 };

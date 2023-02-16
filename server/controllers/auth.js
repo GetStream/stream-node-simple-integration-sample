@@ -15,7 +15,7 @@ const signup = async (req, res) => {
         const { username, password } = req.body;
         const userId =username;
 
-        registerUser(userId, username, password, function (err, result) {
+        registerUser(userId, username, password, (err, result) => {
             signupHandler(err, result, res);
         });
     } catch (err) {
