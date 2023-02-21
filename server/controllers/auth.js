@@ -1,6 +1,8 @@
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
+require("dotenv").config();
 
+const webhook_token = process.env.WEBHOOK_TOKEN;
 const {
     loginHandler,
     registerUser,
@@ -50,4 +52,21 @@ const users = async (req, res) => {
     }
 };
 
-module.exports = { signup, login, users };
+const feedWebhook = async (req, res) => {
+    if (req.query.webhook_token != webhook_token) {
+        res.status(403).send('Forbidden');
+        return;
+    }
+    if (req.method == "GET") {
+        res.status(200).send('dn4mpr346fns');
+        return;
+    }
+    try {
+        const { feed, user } = req.body;
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { signup, login, users, feedWebhook };
