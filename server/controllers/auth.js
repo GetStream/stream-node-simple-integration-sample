@@ -58,6 +58,7 @@ const feedWebhook = async (req, res) => {
     const algolia_app_id = process.env.ALGOLIA_APP_ID;
     const algolia_api_key = process.env.ALGOLIA_API_KEY;
     const algolia_index_name = process.env.ALGOLIA_INDEX_NAME;
+    const algolia_users_index_name = process.env.ALGOLIA_USERS_INDEX_NAME;
 
     if (req.query.webhook_token != webhook_token) {
         res.status(403).send('Forbidden');
@@ -74,16 +75,30 @@ const feedWebhook = async (req, res) => {
         req.body.forEach(element => {
             const newItems = element.new;
             const deletedItems = element.deleted;
-            newItems.forEach(item => {
-                item.objectID = item.id;
-                // delete item.actor["data"];
-                item.time = new Date(item.time).getTime();
-                item.actor.created_at = new Date(item.actor.created_at).getTime();
-                item.actor.updated_at = new Date(item.actor.updated_at).getTime();
-                // console.log(JSON.stringify(item));
-            });
+            const updatedUser = element.generic
+            if (updatedUser != null) {
+                const usersIndex = client.initIndex(algolia_users_index_name);
 
-            index.saveObjects(newItems, { autoGenerateObjectIDIfNotExist: false });
+                updatedUser.objectID = updatedUser.id;
+                usersIndex.saveObjects([updatedUser], { autoGenerateObjectIDIfNotExist: false }).catch((err) => {
+                    console.log(err);
+                });
+            }
+            if (newItems != null) {
+                newItems.forEach(item => {
+                   item.objectID = item.id;
+                   // delete item.actor["data"];
+                   item.time = new Date(item.time).getTime();
+                   item.actor.created_at = new Date(item.actor.created_at).getTime();
+                  item.actor.updated_at = new Date(item.actor.updated_at).getTime();
+                  // console.log(JSON.stringify(item));
+                });
+
+                index.saveObjects(newItems, { autoGenerateObjectIDIfNotExist: false }).catch((err) => {
+                    console.log(err);
+                });
+
+            }
         });
         res.status(200).json(req.body)
     } catch (error) {
