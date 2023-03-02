@@ -11,6 +11,7 @@ const {
     verifyUser,
     searchUsers,
     searchUsersHandler,
+    chPasswordHandler,
 } = require("../utils");
 
 const signup = async (req, res) => {
@@ -33,6 +34,19 @@ const login = async (req, res) => {
 
         verifyUser(username, password, (err, result) => {
             loginHandler(err, result, res);
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const chpasswd = async (req, res) => {
+    try {
+        const { username, password, newPassword } = req.body;
+
+        verifyUser(username, password, (err, result) => {
+            chPasswordHandler(err, result, res, newPassword);
         });
     } catch (error) {
         console.log(error);
@@ -107,4 +121,4 @@ const feedWebhook = async (req, res) => {
     }
 };
 
-module.exports = { signup, login, users, feedWebhook };
+module.exports = { signup, login, chpasswd, users, feedWebhook };

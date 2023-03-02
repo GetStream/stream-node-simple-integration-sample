@@ -117,6 +117,34 @@ const loginHandler = async (error, result, res) => {
     });
 };
 
+const chPasswordHandler = async (err, result, res, newPassword) => {
+    if (err) {
+        res.status(500).json({ message: err });
+        return;
+    }
+
+    if (newPassword == undefined) {
+        res.status(500).json({ message: "No new password." });
+        return;
+    }
+    
+    const { username, id } = result;
+    const salt = bcrypt.genSaltSync(10);
+    const hashed_password = bcrypt.hashSync(newPassword, salt);
+
+    const client = await getClient();
+    const sql = "UPDATE users SET hashed_password = $1, salt = $2 WHERE id = $3";
+    const params = [hashed_password, salt, id];
+
+    await client.query(sql, params, (err, innerResult) => {
+        if (err) {
+            res.status(500).json({ message: err });
+            return;
+        }
+        res.status(200).json({ message: "Password changed successfully" });
+    });
+};
+
 const searchUsersHandler = async (err, result, res) => {
     if (err) {
         res.status(500).json({ message: err });
@@ -127,4 +155,4 @@ const searchUsersHandler = async (err, result, res) => {
     
 
 
-module.exports = { verifyUser, loginHandler, registerUser, signupHandler, searchUsersHandler, searchUsers };
+module.exports = { verifyUser, loginHandler, registerUser, signupHandler, searchUsersHandler, searchUsers, chPasswordHandler };
