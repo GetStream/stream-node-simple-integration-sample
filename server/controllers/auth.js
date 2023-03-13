@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const algoliasearch = require('algoliasearch');
+const Mux = require('@mux/mux-node');
 
 require("dotenv").config();
 
@@ -121,4 +122,25 @@ const feedWebhook = async (req, res) => {
     }
 };
 
-module.exports = { signup, login, chpasswd, users, feedWebhook };
+const muxUpload = async (req, res) => {
+    const mux_token_id = process.env.MUX_TOKEN_ID;
+    const mux_token_secret = process.env.MUX_TOKEN_SECRET;
+
+    const { Video } = new Mux(mux_token_id, mux_token_secret);
+
+    try {
+        Video.Uploads.create({
+            new_asset_settings: {
+                playback_policy: ['public'],
+            }
+        }).then((upload) => {
+            res.status(200).json({ upload_url: upload.url, upload_expiry: upload.expires_at });
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { signup, login, chpasswd, users, feedWebhook, muxUpload };
