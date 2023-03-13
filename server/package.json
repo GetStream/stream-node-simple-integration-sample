@@ -20,6 +20,7 @@
     "nodemon": "^2.0.20",
     "pg": "^8.0",
     "stream-chat": "^8.2.1",
-    "algoliasearch": "4.14.3"
+    "algoliasearch": "4.14.3",
+    "@mux/mux-node": "^7.3.0"
   }
 }
