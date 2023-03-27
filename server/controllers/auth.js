@@ -143,4 +143,18 @@ const muxUpload = async (req, res) => {
     }
 };
 
-module.exports = { signup, login, chpasswd, users, feedWebhook, muxUpload };
+const muxPlayback = async (req, res) => {
+    const mux_token_id = process.env.MUX_TOKEN_ID;
+    const mux_token_secret = process.env.MUX_TOKEN_SECRET;
+
+    const { asset_id } = req.body;
+
+    const { Video } = new Mux(process.env.MUX_TOKEN_ID, process.env.MUX_TOKEN_SECRET);
+
+    Video.Assets.get(asset_id).then((asset) => {
+        console.log(asset.playback_ids);
+        res.status(200).json({ playback_ids: asset.playback_ids });
+    });
+};
+
+module.exports = { signup, login, chpasswd, users, feedWebhook, muxUpload, muxPlayback };
