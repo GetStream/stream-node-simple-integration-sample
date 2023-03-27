@@ -134,7 +134,7 @@ const muxUpload = async (req, res) => {
                 playback_policy: ['public'],
             }
         }).then((upload) => {
-            res.status(200).json({ upload_url: upload.url, upload_expiry: upload.expires_at });
+            res.status(200).json({ upload_id: upload.id, upload_url: upload.url, upload_expiry: upload.expires_at });
         });
     }
     catch (error) {
