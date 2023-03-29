@@ -167,7 +167,7 @@ const muxAsset = async (req, res) => {
 
     Video.Uploads.get(upload_id).then((upload) => {
         console.log(upload);
-        res.status(200).json({ asset_id: upload.asset_id });
+        res.status(200).json({ asset_id: upload.asset_id, status: upload.status });
     });
 };
 
