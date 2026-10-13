@@ -1,3 +1,5 @@
+> **This repository is archived and no longer maintained.** For a current alternative, see [the Feeds iOS SDK](https://getstream.io/activity-feeds/sdk/ios/).
+
 # Sample Node integration server for [Stream Chat](https://getstream.io/chat/) and [Stream Feeds](https://getstream.io/activity-feeds/)
 
 <p align="center">
